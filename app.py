@@ -17,10 +17,10 @@ NOMBRE_MAESTRO = "Profr. Felipe González"
 # 🔐 Seguridad: Escondemos las llaves y credenciales usando st.secrets
 PASS_MAESTRO = st.secrets.get("PASS_MAESTRO", "52627") 
 
-# 📊 Base de datos principal de alumnos (REMANENTE ORIGINAL)
+# 📊 Base de datos principal (Donde están tus pestañas Semana 1, Semana 2...)
 SHEET_ID = st.secrets.get("SHEET_ID", "1g1LxAHApuyk2eAVbpRib8QYdjLNNqAi00iCjhKHnF4A")
 
-# 📝 URL de la Bitácora (NUEVO SCRIPT CONECTADO)
+# 📝 URL de la Bitácora (¡ACTUALIZADA Y LISTA!)
 URL_LOG_SCRIPT = st.secrets.get("URL_LOG_SCRIPT", "https://script.google.com/macros/s/AKfycbwo4om2BBTb3dgDAj4uf1bIXkSiE1wJxpWhrevqmKMvevRJHmKh7uDWtI2yuaiCc9Ra/exec")
 
 # 🎨 Enlaces adaptados a servidores RAW de GitHub para correcto renderizado
@@ -106,10 +106,16 @@ def registrar_en_bitacora(matricula, nombre, semana, accion):
         ts = datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")
         params = {"fecha": ts, "matricula": str(matricula), "nombre": str(nombre), "semana": str(semana), "accion": str(accion)}
         headers = {"User-Agent": "Mozilla/5.0"}
-        requests.get(URL_LOG_SCRIPT, params=params, headers=headers, timeout=10)
-        st.toast(f"Registro: {accion}", icon="✅")
+        
+        # Envío de datos a Google Web App
+        respuesta = requests.get(URL_LOG_SCRIPT, params=params, headers=headers, timeout=10)
+        
+        if respuesta.status_code == 200:
+            st.toast(f"Bitácora: {accion}", icon="✅")
+        else:
+            st.toast(f"⚠️ Error de conexión con Google (HTTP {respuesta.status_code})", icon="❌")
     except Exception as e:
-        print(f"Error al registrar en bitacora: {e}")
+        print(f"Error crítico al conectar con la bitácora: {e}")
 
 def procesar_valor(val):
     v_str = str(val).strip().upper()
@@ -143,7 +149,7 @@ def crear_hoja_alumno_pdf(pdf, datos, semana, es_grupal=False):
         if k.upper() not in omitir and not str(k).startswith('Unnamed'):
             actividad_str = sanear_texto(f" {str(k)[:75]}")
             estado_str = sanear_texto(f" {procesar_valor(v).replace('❌ ','').replace('✅ ','')}")
-            pdf.cell(140, 7, actividad_str, border=1)
+            pdf.cell(140, 7, activity_str, border=1)
             pdf.cell(50, 7, estado_str, border=1, ln=True)
             
     if not es_grupal:
