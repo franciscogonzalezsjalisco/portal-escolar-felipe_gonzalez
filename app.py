@@ -21,7 +21,7 @@ PASS_MAESTRO = st.secrets.get("PASS_MAESTRO", "52627")
 SHEET_ID = st.secrets.get("SHEET_ID", "1g1LxAHApuyk2eAVbpRib8QYdjLNNqAi00iCjhKHnF4A")
 
 # 📝 URL de la Bitácora (¡Enlace /exec corregido y con paréntesis cerrado!)
-URL_LOG_SCRIPT = st.secrets.get("URL_LOG_SCRIPT", "https://script.google.com/macros/s/AKfycbwo4om2BBTb3dgDAj4uf1bIXkSiE1wJxpWhrevqmKMvevRJHmKh7uDWtI2yuaiCc9Ra/exec")
+URL_LOG_SCRIPT = st.secrets.get("URL_LOG_SCRIPT", "https://script.google.com/macros/s/AKfycbz92H4JTJGGVHEkg8grC8SQSd_plgQAnfKHZmRXOKna052-Tm_aqIO564qXEi_dqp7WRQ/exec")
 
 # 🎨 Enlaces de imágenes en GitHub
 URL_ESCUDO = "https://raw.githubusercontent.com/franciscogonzalezsjalisco/portal-escolar-felipe_gonzalez/52819c17985cf4ea867bfe8741a9272d61e1fbd4/WhatsApp%20Image%202026-07-17%20at%2014.37.28.jpeg"
