@@ -10,19 +10,19 @@ import time
 # =====================================================================
 # ⚙️ 1. BLOQUE DE CONFIGURACIÓN (Modifica estos datos para producción)
 # =====================================================================
-st.set_page_config(page_title="Portal Escolar 6°B Urb. 690", layout="centered")
+st.set_page_config(page_title="Portal Escolar 5° Urb. 1115", layout="centered")
 
-NOMBRE_MAESTRO = "Profr. Francisco González"
+NOMBRE_MAESTRO = "Profr. Felipe González"
 
 # 🔐 Seguridad: Escondemos las llaves y credenciales usando st.secrets
 # Si no están configuradas en la nube, usarán los valores por defecto actuales
-PASS_MAESTRO = st.secrets.get("PASS_MAESTRO", "6B2026") 
+PASS_MAESTRO = st.secrets.get("PASS_MAESTRO", "52627") 
 SHEET_ID = st.secrets.get("SHEET_ID", "1g1LxAHApuyk2eAVbpRib8QYdjLNNqAi00iCjhKHnF4A")
 URL_LOG_SCRIPT = st.secrets.get("URL_LOG_SCRIPT", "https://script.google.com/macros/s/AKfycbwNGbSsky_dCyzvhf0WGfWj0mJMxR74Jrz2jmpIkJYLUDsH07cTCQjgbKO2E-TlaN_G/exec")
 
 # 🎨 Elementos Visuales (Cámbialos por tus nuevos enlaces de imagen)
-URL_ESCUDO = "https://raw.githubusercontent.com/franciscogonzalezsjalisco/portal-escolar-6b/main/ESCUDO%20690%20(1).png"
-URL_FONDO = "https://raw.githubusercontent.com/franciscogonzalezsjalisco/portal-escolar-6b/main/6b.png"
+URL_ESCUDO = "https://github.com/franciscogonzalezsjalisco/portal-escolar-felipe_gonzalez/blob/52819c17985cf4ea867bfe8741a9272d61e1fbd4/WhatsApp%20Image%202026-07-17%20at%2014.37.28.jpeg"
+URL_FONDO = "https://github.com/franciscogonzalezsjalisco/portal-escolar-felipe_gonzalez/blob/a14b8851f0aa4863b5d7d992d18a9e34c85acd9d/bosque-con-vegetacion-de-tonos-violetas-y-lavanda-ruinas-de-wyveria-de-monster-hunter-wilds_3840x2160_xtrafondos.com.jpg"
 
 # =====================================================================
 
