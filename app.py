@@ -91,8 +91,8 @@ st.markdown(f"""
 st.markdown(f"""
     <div style='text-align: center;'>
         <img src="{URL_ESCUDO}" width="120" style="margin-bottom: 10px;">
-        <h2 style='margin-top:0;'>URBANA 690</h2>
-        <h4 style='color: #457B9D !important;'>6° Grado Grupo B</h4>
+        <h2 style='margin-top:0;'>URBANA 1115</h2>
+        <h4 style='color: #457B9D !important;'>5° Grado</h4>
     </div>
     """, unsafe_allow_html=True)
 st.markdown("---")
