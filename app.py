@@ -160,7 +160,7 @@ def obtener_nombres_hojas(sid):
 
 @st.cache_data(ttl=300)
 def cargar_datos(nombre_hoja):
-    url = f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/gviz/tq?tqx=out:csv&sheet={quote(nombre_hoja)}&t={int(time.time())}"
+    url = f"https://docs.google.com/spreadsheets/d/1eT2g2wFwCptpwrsbD647BgNGGW7g3S1wHa1Gvfnmyxk/edit?gid=0#gid=0{quote(nombre_hoja)}&t={int(time.time())}"
     return pd.read_csv(url)
 
 # --- FLUJO DE PANTALLAS ---
