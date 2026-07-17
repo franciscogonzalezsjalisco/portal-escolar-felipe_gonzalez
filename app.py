@@ -109,7 +109,7 @@ def registrar_en_bitacora(matricula, nombre, semana, accion):
         requests.get(URL_LOG_SCRIPT, params=params, headers=headers, timeout=10)
         st.toast(f"Registro: {accion}", icon="✅")
     except Exception as e:
-        print(f"Error al registrar en bitácora: {e}")
+        print(f"Error al registrar en bitacora: {e}")
 
 def procesar_valor(val):
     v_str = str(val).strip().upper()
