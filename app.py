@@ -16,9 +16,11 @@ NOMBRE_MAESTRO = "Profr. Felipe González"
 
 # 🔐 Seguridad: Escondemos las llaves y credenciales usando st.secrets
 PASS_MAESTRO = st.secrets.get("PASS_MAESTRO", "52627") 
-SHEET_ID = st.secrets.get("SHEET_ID", "1eT2g2wFwCptpwrsbD647BgNGGW7g3S1wHa1Gvfnmyxk")
 
-# 📝 URL de la Bitácora actualizada correctamente
+# 📊 Base de datos principal de alumnos (REMANENTE ORIGINAL)
+SHEET_ID = st.secrets.get("SHEET_ID", "1g1LxAHApuyk2eAVbpRib8QYdjLNNqAi00iCjhKHnF4A")
+
+# 📝 URL de la Bitácora (NUEVO SCRIPT CONECTADO)
 URL_LOG_SCRIPT = st.secrets.get("URL_LOG_SCRIPT", "https://script.google.com/macros/s/AKfycbwo4om2BBTb3dgDAj4uf1bIXkSiE1wJxpWhrevqmKMvevRJHmKh7uDWtI2yuaiCc9Ra/exec")
 
 # 🎨 Enlaces adaptados a servidores RAW de GitHub para correcto renderizado
