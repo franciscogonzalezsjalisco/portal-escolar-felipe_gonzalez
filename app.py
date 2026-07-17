@@ -8,22 +8,22 @@ from urllib.parse import quote
 import time
 
 # =====================================================================
-# ⚙️ 1. BLOQUE DE CONFIGURACIÓN (Modifica estos datos para producción)
+# ⚙️ 1. BLOQUE DE CONFIGURACIÓN
 # =====================================================================
 st.set_page_config(page_title="Portal Escolar 5° Urb. 1115", layout="centered")
 
 NOMBRE_MAESTRO = "Profr. Felipe González"
 
-# 🔐 Seguridad: Escondemos las llaves y credenciales usando st.secrets
+# 🔐 Seguridad
 PASS_MAESTRO = st.secrets.get("PASS_MAESTRO", "52627") 
 
-# 📊 Base de datos principal (Donde están tus pestañas Semana 1, Semana 2...)
+# 📊 Base de datos principal (Calificaciones)
 SHEET_ID = st.secrets.get("SHEET_ID", "1g1LxAHApuyk2eAVbpRib8QYdjLNNqAi00iCjhKHnF4A")
 
-# 📝 URL de la Bitácora (¡ACTUALIZADA Y LISTA!)
+# 📝 URL de la Bitácora (¡Enlace /exec corregido y con paréntesis cerrado!)
 URL_LOG_SCRIPT = st.secrets.get("URL_LOG_SCRIPT", "https://script.google.com/macros/s/AKfycbwo4om2BBTb3dgDAj4uf1bIXkSiE1wJxpWhrevqmKMvevRJHmKh7uDWtI2yuaiCc9Ra/exec")
 
-# 🎨 Enlaces adaptados a servidores RAW de GitHub para correcto renderizado
+# 🎨 Enlaces de imágenes en GitHub
 URL_ESCUDO = "https://raw.githubusercontent.com/franciscogonzalezsjalisco/portal-escolar-felipe_gonzalez/52819c17985cf4ea867bfe8741a9272d61e1fbd4/WhatsApp%20Image%202026-07-17%20at%2014.37.28.jpeg"
 URL_FONDO = "https://raw.githubusercontent.com/franciscogonzalezsjalisco/portal-escolar-felipe_gonzalez/a14b8851f0aa4863b5d7d992d18a9e34c85acd9d/bosque-con-vegetacion-de-tonos-violetas-y-lavanda-ruinas-de-wyveria-de-monster-hunter-wilds_3840x2160_xtrafondos.com.jpg"
 
@@ -107,13 +107,11 @@ def registrar_en_bitacora(matricula, nombre, semana, accion):
         params = {"fecha": ts, "matricula": str(matricula), "nombre": str(nombre), "semana": str(semana), "accion": str(accion)}
         headers = {"User-Agent": "Mozilla/5.0"}
         
-        # Envío de datos a Google Web App
         respuesta = requests.get(URL_LOG_SCRIPT, params=params, headers=headers, timeout=10)
-        
         if respuesta.status_code == 200:
             st.toast(f"Bitácora: {accion}", icon="✅")
         else:
-            st.toast(f"⚠️ Error de conexión con Google (HTTP {respuesta.status_code})", icon="❌")
+            st.toast(f"⚠️ Error de bitácora (HTTP {respuesta.status_code})", icon="❌")
     except Exception as e:
         print(f"Error crítico al conectar con la bitácora: {e}")
 
@@ -149,7 +147,7 @@ def crear_hoja_alumno_pdf(pdf, datos, semana, es_grupal=False):
         if k.upper() not in omitir and not str(k).startswith('Unnamed'):
             actividad_str = sanear_texto(f" {str(k)[:75]}")
             estado_str = sanear_texto(f" {procesar_valor(v).replace('❌ ','').replace('✅ ','')}")
-            pdf.cell(140, 7, activity_str, border=1)
+            pdf.cell(140, 7, actividad_str, border=1)  # Corrección de variable aquí
             pdf.cell(50, 7, estado_str, border=1, ln=True)
             
     if not es_grupal:
