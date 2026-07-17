@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 from fpdf import FPDF
@@ -17,10 +16,12 @@ NOMBRE_MAESTRO = "Profr. Felipe González"
 
 # 🔐 Seguridad: Escondemos las llaves y credenciales usando st.secrets
 PASS_MAESTRO = st.secrets.get("PASS_MAESTRO", "52627") 
-SHEET_ID = st.secrets.get("SHEET_ID", "1g1LxAHApuyk2eAVbpRib8QYdjLNNqAi00iCjhKHnF4A")
-URL_LOG_SCRIPT = st.secrets.get("URL_LOG_SCRIPT", "https://script.google.com/macros/s/AKfycbwNGbSsky_dCyzvhf0WGfWj0mJMxR74Jrz2jmpIkJYLUDsH07cTCQjgbKO2E-TlaN_G/exec")
+SHEET_ID = st.secrets.get("SHEET_ID", "1eT2g2wFwCptpwrsbD647BgNGGW7g3S1wHa1Gvfnmyxk")
 
-# 🎨 CORRECCIÓN: Enlaces adaptados a servidores RAW de GitHub para correcto renderizado
+# 📝 URL de la Bitácora actualizada correctamente
+URL_LOG_SCRIPT = st.secrets.get("URL_LOG_SCRIPT", "https://script.google.com/macros/s/AKfycbwo4om2BBTb3dgDAj4uf1bIXkSiE1wJxpWhrevqmKMvevRJHmKh7uDWtI2yuaiCc9Ra/exec")
+
+# 🎨 Enlaces adaptados a servidores RAW de GitHub para correcto renderizado
 URL_ESCUDO = "https://raw.githubusercontent.com/franciscogonzalezsjalisco/portal-escolar-felipe_gonzalez/52819c17985cf4ea867bfe8741a9272d61e1fbd4/WhatsApp%20Image%202026-07-17%20at%2014.37.28.jpeg"
 URL_FONDO = "https://raw.githubusercontent.com/franciscogonzalezsjalisco/portal-escolar-felipe_gonzalez/a14b8851f0aa4863b5d7d992d18a9e34c85acd9d/bosque-con-vegetacion-de-tonos-violetas-y-lavanda-ruinas-de-wyveria-de-monster-hunter-wilds_3840x2160_xtrafondos.com.jpg"
 
@@ -148,7 +149,7 @@ def crear_hoja_alumno_pdf(pdf, datos, semana, es_grupal=False):
         ts = datetime.now(pytz.timezone('America/Mexico_City')).strftime("%d/%m/%Y %H:%M:%S")
         pdf.multi_cell(0, 5, sanear_texto(f"Descarga oficial: {ts} hrs.\nMatrícula: {datos.get('MATRICULA','')}"), align='C')
 
-@st.cache_data(ttl=60)
+@st.cache_data(ttl=15)
 def obtener_nombres_hojas(sid):
     try:
         url = f"https://docs.google.com/spreadsheets/d/{sid}/export?format=xlsx"
@@ -158,7 +159,7 @@ def obtener_nombres_hojas(sid):
         print(f"Error al obtener hojas: {e}")
         return ["Semana 1"]
 
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=15)
 def cargar_datos(nombre_hoja):
     url = f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/gviz/tq?tqx=out:csv&sheet={quote(nombre_hoja)}&t={int(time.time())}"
     return pd.read_csv(url)
@@ -217,11 +218,10 @@ if st.session_state.pantalla == 'inicio':
                         for _, f in df_m.iterrows(): 
                             crear_hoja_alumno_pdf(pdf_m, f.to_dict(), sem_m, es_grupal=True)
                         
-                        # Manejo seguro de la salida según la versión de FPDF
                         res_pdf = pdf_m.output(dest='S')
                         pdf_bytes = res_pdf.encode('latin-1') if isinstance(res_pdf, str) else bytes(res_pdf)
                         
-                        st.download_button(label=f"📥 Descargar {sem_m}", data=pdf_bytes, file_name=f"Grupo_6B_{sem_m}.pdf", mime="application/pdf")
+                        st.download_button(label=f"📥 Descargar {sem_m}", data=pdf_bytes, file_name=f"Grupo_5Grado_{sem_m}.pdf", mime="application/pdf")
                         registrar_en_bitacora("MAESTRO", NOMBRE_MAESTRO, sem_m, "Descarga Masiva")
             
             with tab2:
