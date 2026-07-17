@@ -1,3 +1,4 @@
+
 import streamlit as st
 import pandas as pd
 from fpdf import FPDF
@@ -15,14 +16,13 @@ st.set_page_config(page_title="Portal Escolar 5° Urb. 1115", layout="centered")
 NOMBRE_MAESTRO = "Profr. Felipe González"
 
 # 🔐 Seguridad: Escondemos las llaves y credenciales usando st.secrets
-# Si no están configuradas en la nube, usarán los valores por defecto actuales
 PASS_MAESTRO = st.secrets.get("PASS_MAESTRO", "52627") 
 SHEET_ID = st.secrets.get("SHEET_ID", "1g1LxAHApuyk2eAVbpRib8QYdjLNNqAi00iCjhKHnF4A")
 URL_LOG_SCRIPT = st.secrets.get("URL_LOG_SCRIPT", "https://script.google.com/macros/s/AKfycbwNGbSsky_dCyzvhf0WGfWj0mJMxR74Jrz2jmpIkJYLUDsH07cTCQjgbKO2E-TlaN_G/exec")
 
-# 🎨 Elementos Visuales (Cámbialos por tus nuevos enlaces de imagen)
-URL_ESCUDO = "https://github.com/franciscogonzalezsjalisco/portal-escolar-felipe_gonzalez/blob/52819c17985cf4ea867bfe8741a9272d61e1fbd4/WhatsApp%20Image%202026-07-17%20at%2014.37.28.jpeg"
-URL_FONDO = "https://github.com/franciscogonzalezsjalisco/portal-escolar-felipe_gonzalez/blob/a14b8851f0aa4863b5d7d992d18a9e34c85acd9d/bosque-con-vegetacion-de-tonos-violetas-y-lavanda-ruinas-de-wyveria-de-monster-hunter-wilds_3840x2160_xtrafondos.com.jpg"
+# 🎨 CORRECCIÓN: Enlaces adaptados a servidores RAW de GitHub para correcto renderizado
+URL_ESCUDO = "https://raw.githubusercontent.com/franciscogonzalezsjalisco/portal-escolar-felipe_gonzalez/52819c17985cf4ea867bfe8741a9272d61e1fbd4/WhatsApp%20Image%202026-07-17%20at%2014.37.28.jpeg"
+URL_FONDO = "https://raw.githubusercontent.com/franciscogonzalezsjalisco/portal-escolar-felipe_gonzalez/a14b8851f0aa4863b5d7d992d18a9e34c85acd9d/bosque-con-vegetacion-de-tonos-violetas-y-lavanda-ruinas-de-wyveria-de-monster-hunter-wilds_3840x2160_xtrafondos.com.jpg"
 
 # =====================================================================
 
@@ -216,7 +216,11 @@ if st.session_state.pantalla == 'inicio':
                         pdf_m = FPDF()
                         for _, f in df_m.iterrows(): 
                             crear_hoja_alumno_pdf(pdf_m, f.to_dict(), sem_m, es_grupal=True)
-                        pdf_bytes = bytes(pdf_m.output())
+                        
+                        # Manejo seguro de la salida según la versión de FPDF
+                        res_pdf = pdf_m.output(dest='S')
+                        pdf_bytes = res_pdf.encode('latin-1') if isinstance(res_pdf, str) else bytes(res_pdf)
+                        
                         st.download_button(label=f"📥 Descargar {sem_m}", data=pdf_bytes, file_name=f"Grupo_6B_{sem_m}.pdf", mime="application/pdf")
                         registrar_en_bitacora("MAESTRO", NOMBRE_MAESTRO, sem_m, "Descarga Masiva")
             
@@ -263,7 +267,9 @@ if st.session_state.pantalla == 'inicio':
                                         crear_hoja_alumno_pdf(pdf_hist, datos_al, sem, es_grupal=False)
                             
                             if hubo_datos:
-                                pdf_bytes_hist = bytes(pdf_hist.output())
+                                res_pdf_h = pdf_hist.output(dest='S')
+                                pdf_bytes_hist = res_pdf_h.encode('latin-1') if isinstance(res_pdf_h, str) else bytes(res_pdf_h)
+                                
                                 st.download_button(
                                     label=f"📥 Descargar Reporte de {nombre_alumno_hist}", 
                                     data=pdf_bytes_hist, 
@@ -325,7 +331,11 @@ elif st.session_state.pantalla == 'resultados':
     with c1:
         pdf_ind = FPDF()
         crear_hoja_alumno_pdf(pdf_ind, datos, st.session_state.semana_activa)
-        st.download_button(f"📥 PDF", data=bytes(pdf_ind.output()), file_name=f"Reporte_{datos.get('PATERNO','')}.pdf")
+        
+        res_pdf_i = pdf_ind.output(dest='S')
+        pdf_bytes_ind = res_pdf_i.encode('latin-1') if isinstance(res_pdf_i, str) else bytes(res_pdf_i)
+        
+        st.download_button(f"📥 PDF", data=pdf_bytes_ind, file_name=f"Reporte_{datos.get('PATERNO','')}.pdf")
     with c2:
         if st.button("👥 SALIR"): st.session_state.pantalla = 'inicio'; st.rerun()
 
