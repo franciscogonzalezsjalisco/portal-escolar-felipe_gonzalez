@@ -7,20 +7,26 @@ import pytz
 from urllib.parse import quote
 import time
 
-# 1. CONFIGURACIÓN E IDENTIDAD
+# =====================================================================
+# ⚙️ 1. BLOQUE DE CONFIGURACIÓN (Modifica estos datos para producción)
+# =====================================================================
 st.set_page_config(page_title="Portal Escolar 6°B Urb. 690", layout="centered")
 
 NOMBRE_MAESTRO = "Profr. Francisco González"
 
-# MEJORA 1: Seguridad de la contraseña usando st.secrets (con un valor por defecto si no está configurado)
-# Para desarrollo local, crea un archivo en .streamlit/secrets.toml con: PASS_MAESTRO = "TuContraseñaSegura"
+# 🔐 Seguridad: Escondemos las llaves y credenciales usando st.secrets
+# Si no están configuradas en la nube, usarán los valores por defecto actuales
 PASS_MAESTRO = st.secrets.get("PASS_MAESTRO", "6B2026") 
+SHEET_ID = st.secrets.get("SHEET_ID", "1g1LxAHApuyk2eAVbpRib8QYdjLNNqAi00iCjhKHnF4A")
+URL_LOG_SCRIPT = st.secrets.get("URL_LOG_SCRIPT", "https://script.google.com/macros/s/AKfycbwNGbSsky_dCyzvhf0WGfWj0mJMxR74Jrz2jmpIkJYLUDsH07cTCQjgbKO2E-TlaN_G/exec")
 
+# 🎨 Elementos Visuales (Cámbialos por tus nuevos enlaces de imagen)
 URL_ESCUDO = "https://raw.githubusercontent.com/franciscogonzalezsjalisco/portal-escolar-6b/main/ESCUDO%20690%20(1).png"
 URL_FONDO = "https://raw.githubusercontent.com/franciscogonzalezsjalisco/portal-escolar-6b/main/6b.png"
-SHEET_ID = "1-WhenbF_94yLK556stoWxLlKBpmP88UTfYip5BaygFM"
-URL_LOG_SCRIPT = "https://script.google.com/macros/s/AKfycbwNGbSsky_dCyzvhf0WGfWj0mJMxR74Jrz2jmpIkJYLUDsH07cTCQjgbKO2E-TlaN_G/exec"
 
+# =====================================================================
+
+# Inicialización del estado de la app
 if 'pantalla' not in st.session_state: st.session_state.pantalla = 'inicio'
 if 'semana_activa' not in st.session_state: st.session_state.semana_activa = None
 if 'ID_USUARIO' not in st.session_state: st.session_state.ID_USUARIO = ""
@@ -100,7 +106,6 @@ def registrar_en_bitacora(matricula, nombre, semana, accion):
         requests.get(URL_LOG_SCRIPT, params=params, headers=headers, timeout=10)
         st.toast(f"Registro: {accion}", icon="✅")
     except Exception as e:
-        # MEJORA 2: Manejo de errores no silencioso
         print(f"Error al registrar en bitácora: {e}")
 
 def procesar_valor(val):
@@ -109,17 +114,11 @@ def procesar_valor(val):
     if v_str in ['1', '1.0', 'TRUE', 'VERDADERO']: return "✅ Completado"
     return str(val)
 
-# Función de apoyo para evitar errores de codificación en FPDF clásico (si no usas fpdf2)
 def sanear_texto(texto):
     return str(texto).encode('latin-1', 'replace').decode('latin-1')
 
 def crear_hoja_alumno_pdf(pdf, datos, semana, es_grupal=False):
     pdf.add_page()
-    
-    # MEJORA 4: (Opcional) Si subes un archivo Arial.ttf a tu repo, descomenta las siguientes dos líneas para soporte total de acentos/ñ
-    # pdf.add_font('ArialUnicode', '', 'Arial.ttf', uni=True)
-    # pdf.set_font("ArialUnicode", "", 14)
-    # Mientras tanto, usaremos sanear_texto() para evitar que la aplicación se caiga con caracteres especiales.
     
     nombre_full = f"{datos.get('NOMBRE', '')} {datos.get('PATERNO', '')} {datos.get('MATERNO', '')}".strip()
     pdf.set_font("Helvetica", "B", 14)
@@ -159,7 +158,6 @@ def obtener_nombres_hojas(sid):
         print(f"Error al obtener hojas: {e}")
         return ["Semana 1"]
 
-# MEJORA 3: Caché para evitar saturar Google Sheets y hacer la app mucho más rápida (guarda los datos por 5 minutos)
 @st.cache_data(ttl=300)
 def cargar_datos(nombre_hoja):
     url = f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/gviz/tq?tqx=out:csv&sheet={quote(nombre_hoja)}&t={int(time.time())}"
@@ -180,15 +178,11 @@ if st.session_state.pantalla == 'inicio':
                     st.session_state.pantalla = 'matricula'; st.rerun()
     st.markdown("---")
     
-  # --- ACCESO MAESTRO ---
+    # --- ACCESO MAESTRO ---
     with st.expander("🔐 Acceso Maestro"):
         pw = st.text_input("Contraseña:", type="password")
         if pw == PASS_MAESTRO:
-            
-            # --- NUEVA LÓGICA: Extraer la lista de alumnos automáticamente ---
-            # Usamos la primera hoja disponible para construir un diccionario de {Nombre: Matrícula}
             df_alumnos = cargar_datos(listado_hojas[0])
-            # Aseguramos que los nombres de las columnas estén en mayúsculas para no fallar
             df_alumnos.columns = [str(c).strip().upper() for c in df_alumnos.columns] 
             
             diccionario_alumnos = {}
@@ -198,29 +192,22 @@ if st.session_state.pantalla == 'inicio':
                 col_matricula = col_m[0]
                 for _, row in df_alumnos.iterrows():
                     mat = str(row[col_matricula]).replace('.0', '').strip()
-                    # Verificamos que sea una matrícula válida
                     if mat and mat != 'NAN':
                         pat = str(row.get('PATERNO', '')).strip()
                         mat_ape = str(row.get('MATERNO', '')).strip()
                         nom = str(row.get('NOMBRE', '')).strip()
                         
-                        # Limpiamos textos vacíos o nulos
                         pat = "" if pat == "NAN" else pat
                         mat_ape = "" if mat_ape == "NAN" else mat_ape
                         nom = "" if nom == "NAN" else nom
                         
-                        # Armamos el nombre empezando por apellidos
                         nombre_completo = f"{pat} {mat_ape} {nom}".strip()
                         if nombre_completo:
                             diccionario_alumnos[nombre_completo] = mat
             
-            # Ordenamos los nombres alfabéticamente
             nombres_ordenados = sorted(diccionario_alumnos.keys())
-            
-            # Creamos dos pestañas para organizar las descargas
             tab1, tab2 = st.tabs(["👥 Reporte Grupal", "👤 Reporte Histórico / Especializado"])
             
-            # PESTAÑA 1: Todo el grupo, una semana
             with tab1:
                 sem_m = st.selectbox("Semana para reporte grupal:", listado_hojas)
                 if st.button("🚀 GENERAR PDF GRUPAL"):
@@ -233,13 +220,10 @@ if st.session_state.pantalla == 'inicio':
                         st.download_button(label=f"📥 Descargar {sem_m}", data=pdf_bytes, file_name=f"Grupo_6B_{sem_m}.pdf", mime="application/pdf")
                         registrar_en_bitacora("MAESTRO", NOMBRE_MAESTRO, sem_m, "Descarga Masiva")
             
-            # PESTAÑA 2: Un alumno, selección de semanas específicas
             with tab2:
-                
-                # NUEVO: Menú desplegable inteligente
                 if nombres_ordenados:
                     alumno_seleccionado = st.selectbox("🧑‍🎓 Selecciona al alumno:", nombres_ordenados)
-                    mat_hist = diccionario_alumnos[alumno_seleccionado] # Sacamos la matrícula invisiblemente
+                    mat_hist = diccionario_alumnos[alumno_seleccionado]
                 else:
                     st.warning("No se pudo cargar la lista de alumnos automáticamente.")
                     mat_hist = st.text_input("Ingresa la matrícula del alumno a buscar:")
